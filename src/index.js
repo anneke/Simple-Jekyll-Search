@@ -4,6 +4,7 @@
   let options = {
     searchInput: null,
     resultsContainer: null,
+    resultsContainerList: null,
     json: [],
     success: Function.prototype,
     searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
@@ -12,6 +13,8 @@
       return 0
     },
     noResultsText: 'No results found',
+    numberResultsText: 'I found',
+    numberResultsTextAfter: 'results',
     limit: 10,
     fuzzy: false,
     debounceTime: null,
@@ -95,10 +98,15 @@
 
   function emptyResultsContainer () {
     options.resultsContainer.innerHTML = ''
+    options.resultsContainerList.innerHTML = ''
   }
 
   function appendToResultsContainer (text) {
     options.resultsContainer.innerHTML += text
+  }
+
+  function appendToResultsContainerList (text) {
+    options.resultsContainerList.innerHTML += text
   }
 
   function handleSubmit () {
@@ -131,10 +139,12 @@
     const len = results.length
     if (len === 0) {
       return appendToResultsContainer(options.noResultsText)
-    }
-    for (let i = 0; i < len; i++) {
-      results[i].query = query
-      appendToResultsContainer(templater.compile(results[i]))
+    } else {
+      appendToResultsContainer(`${options.numberResultsText} ${len} ${options.numberResultsTextAfter}`)
+      for (let i = 0; i < len; i++) {
+        results[i].query = query
+        appendToResultsContainerList(templater.compile(results[i]))
+      }
     }
   }
 
