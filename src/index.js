@@ -16,7 +16,8 @@
     fuzzy: false,
     debounceTime: null,
     exclude: [],
-    onSearch: Function.prototype
+    onSearch: Function.prototype,
+    formSubmit: null
   }
 
   let debounceTimerHandle
@@ -75,7 +76,12 @@
 
   function initWithJSON (json) {
     repository.put(json)
-    registerInput()
+    
+    if (options.formSubmit != null) {
+      handleSubmit()
+    } else {
+      registerInput()
+    }
   }
 
   function initWithURL (url) {
@@ -93,6 +99,16 @@
 
   function appendToResultsContainer (text) {
     options.resultsContainer.innerHTML += text
+  }
+
+
+  function handleSubmit() {
+    options.formSubmit.addEventListener('submit', function (e) {
+        e.preventDefault();
+        
+        emptyResultsContainer()
+        debounce(function () { search(options.searchInput.value) }, options.debounceTime)
+    })
   }
 
   function registerInput () {
